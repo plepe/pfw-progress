@@ -27,10 +27,10 @@ function render (labels, data) {
     data: {
       labels,
       datasets: [{
-	label: 'Unterschriften',
+	label: 'Platz für Wien - Unterschriften (Stand jeweils um Mitternacht)',
 	data,
-	backgroundColor: '#f00',
-	borderColor: '#000'
+	backgroundColor: 'rgb(239, 121, 45)',
+	borderColor: 'rgb(14, 83, 141)'
       }]
     },
     options: {}
