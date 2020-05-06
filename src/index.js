@@ -1,7 +1,7 @@
 const httpRequest = require('./httpRequest.js')
 
 window.onload = () => {
-  httpRequest('progress.csv', {}, (err, result) => {
+  httpRequest('progress.csv?' + (new Date().getDate()), {}, (err, result) => {
     if (err) {
       return alert(err)
     }
