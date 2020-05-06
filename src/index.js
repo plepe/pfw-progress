@@ -12,8 +12,10 @@ window.onload = () => {
 
     rows.forEach(row => {
       let v = row.split(/:/)
-      labels.push(v[0])
-      data.push(v[1])
+      if (v.length >= 2) {
+	labels.push(v[0])
+	data.push(v[1])
+      }
     })
 
     render(labels, data)
