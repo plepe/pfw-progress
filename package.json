@@ -1,8 +1,10 @@
 {
   "name": "pfw-progress",
   "description": "Entwicklung der Platz für Wien Unterschriftenkampagne",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",
-  "license": "GPL-3.0"
+  "license": "GPL-3.0",
+  "dependencies": {
+    "chart.js": "^2.9.3"
+  }
 }
