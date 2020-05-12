@@ -99,21 +99,23 @@ function show (plz) {
 
 function render (labels, data, label) {
   const ctx = document.getElementById('chart').getContext('2d');
-  if (typeof chart !== 'undefined') {
-    chart.destroy()
+  if (typeof chart === 'undefined') {
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label,
+          data,
+          backgroundColor: 'rgb(239, 121, 45)',
+          borderColor: 'rgb(14, 83, 141)'
+        }]
+      },
+      options: {}
+    })
+  } else {
+    chart.data.datasets[0].labels = labels
+    chart.data.datasets[0].data = data
+    chart.update()
   }
-
-  chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-	label,
-	data,
-	backgroundColor: 'rgb(239, 121, 45)',
-	borderColor: 'rgb(14, 83, 141)'
-      }]
-    },
-    options: {}
-  })
 }
