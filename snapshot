@@ -1,0 +1,6 @@
+#!/bin/sh
+
+DATE=`date +'%Y-%m-%d' --date='1 days ago'`
+COUNT=`curl https://platzfuer.wien/ 2>/dev/null | grep data-counter-end | sed -E 's/^.*data-counter-end="([0-9]+)".*$/\1/'`
+
+echo "${DATE}:${COUNT}" >>progress.csv
