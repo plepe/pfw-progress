@@ -2,8 +2,9 @@
   "name": "pfw-progress",
   "description": "Entwicklung der Platz für Wien Unterschriftenkampagne",
   "scripts": {
-      "build": "mkdir -p dist && browserify src/index.js -o dist/app.js",
-      "watch": "watchify --debug src/index.js -o dist/app.js -v"
+    "build": "mkdir -p dist && browserify src/index.js -o dist/app.js",
+    "watch": "watchify --debug src/index.js -o dist/app.js -v",
+    "prepare": "npm run build"
   },
   "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",
   "license": "GPL-3.0",
