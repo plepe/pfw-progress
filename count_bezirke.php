@@ -1,5 +1,5 @@
 <?php
-$csvfile = fopen('/tmp/data.csv', 'r');
+$csvfile = fopen('data.csv', 'r');
 $fields = fgetcsv($csvfile);
 
 $count_recorded = array();
