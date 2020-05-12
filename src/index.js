@@ -120,7 +120,15 @@ function render (labels, data, label) {
           borderColor: 'rgb(14, 83, 141)'
         }]
       },
-      options: {}
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
     })
 
     chart2 = new Chart('chart2', {
