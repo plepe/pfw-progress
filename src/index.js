@@ -17,7 +17,10 @@ function date_format (date) {
 window.onload = () => {
   let as = document.getElementsByTagName('a')
   for (let i = 0; i < as.length; i++) {
-    as[i].onclick = () => show(as[i].getAttribute('data-plz'))
+    as[i].onclick = () => {
+      show(as[i].getAttribute('data-plz'))
+      return false
+    }
   }
 
   httpRequest('progress.csv?' + (new Date().getDate()), {}, (err, result) => {
