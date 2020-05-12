@@ -8,7 +8,7 @@ let data_plz
 let first_day = date_format(new Date())
 let last_day = ''
 
-let chart
+let chart1, chart2
 
 function date_format (date) {
   return date.toISOString().substr(0, 10)
@@ -98,9 +98,15 @@ function show (plz) {
 }
 
 function render (labels, data, label) {
-  const ctx = document.getElementById('chart').getContext('2d');
-  if (typeof chart === 'undefined') {
-    chart = new Chart(ctx, {
+  let barLast = 0
+  barData = data.map(v => {
+    const h = v - barLast
+    barLast = v
+    return h
+  })
+
+  if (typeof chart1 === 'undefined') {
+    chart1 = new Chart('chart1', {
       type: 'line',
       data: {
         labels,
@@ -113,9 +119,30 @@ function render (labels, data, label) {
       },
       options: {}
     })
+
+    chart2 = new Chart('chart2', {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label,
+          data: barData,
+          backgroundColor: 'rgb(239, 121, 45)',
+          borderWidth: 2,
+          borderColor: 'rgb(14, 83, 141)'
+        }]
+      },
+      options: {}
+    })
   } else {
-    chart.data.datasets[0].labels = labels
-    chart.data.datasets[0].data = data
-    chart.update()
+    chart1.data.datasets[0].label = label
+    chart1.data.labels = labels
+    chart1.data.datasets[0].data = data
+    chart1.update()
+
+    chart2.data.datasets[0].label = label
+    chart2.data.labels = labels
+    chart2.data.datasets[0].data = barData
+    chart2.update()
   }
 }
