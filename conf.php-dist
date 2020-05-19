@@ -1,0 +1,9 @@
+<?php
+$languages = array("de");
+
+$db_conf = array(
+  'type' => 'mysql',
+  'dbname' => 'DATABASE',
+  'username' => 'USER',
+  'password' => 'PASSWORD',
+);
