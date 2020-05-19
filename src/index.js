@@ -4,7 +4,7 @@ let data_gesamt = []
 let labels_gesamt = []
 let label_gesamt = 'Platz für Wien - Unterschriften (Stand jeweils um Mitternacht)'
 
-let data_plz
+let data_offline, data_pdb
 let first_day = date_format(new Date())
 let last_day = ''
 
@@ -49,29 +49,33 @@ function show (plz) {
     return render(labels_gesamt, data_gesamt, label_gesamt)
   }
 
-  if (typeof data_plz === 'undefined') {
-    return httpRequest('plz.csv?' + (new Date().getDate()), {}, (err, result) => {
+  if (typeof data_offline === 'undefined') {
+    return httpRequest('csv.php?' + (new Date().getDate()), {}, (err, result) => {
       if (err) {
         return alert(err)
       }
 
       let rows = result.body.split(/\n/g)
-      data_plz = {}
+      data_offline = {}
+      data_pdb = {}
 
       rows.slice(1).forEach(row => {
-        let v = row.split(/:/)
-        if (v.length >= 3) {
-          if (!(v[0] in data_plz)) {
-            data_plz[v[0]] = {}
-          }
-          data_plz[v[0]][v[1]] = v[2]
+        let v = row.split(/,/)
+        if (v.length >= 4) {
+          let db = v[0] === 'pdb' ? data_pdb :
+            v[0] === 'offline' ? data_offline : {}
 
-          if (v[0] < first_day) {
-            first_day = v[0]
+          if (!(v[1] in db)) {
+            db[v[1]] = {}
+          }
+          db[v[1]][v[2]] = v[3]
+
+          if (v[1] < first_day) {
+            first_day = v[1]
           }
 
-          if (v[0] > last_day) {
-            last_day = v[0]
+          if (v[1] > last_day) {
+            last_day = v[1]
           }
         }
       })
@@ -90,8 +94,12 @@ function show (plz) {
   while (day <= last_day) {
     let _d = date_format(day)
 
-    if (_d in data_plz && plz in data_plz[_d]) {
-      c += parseInt(data_plz[_d][plz])
+    if (_d in data_offline && plz in data_offline[_d]) {
+      c += parseInt(data_offline[_d][plz])
+    }
+
+    if (_d in data_pdb && plz in data_pdb[_d]) {
+      c += parseInt(data_pdb[_d][plz])
     }
 
     d.push(c)
