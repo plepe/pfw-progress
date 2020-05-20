@@ -44,44 +44,54 @@ window.onload = () => {
   })
 }
 
+function load_detail (callback) {
+  httpRequest('csv.php?' + (new Date().getDate()), {}, (err, result) => {
+    if (err) {
+      return callback(err)
+    }
+
+    let rows = result.body.split(/\n/g)
+    data_offline = {}
+    data_pdb = {}
+
+    rows.slice(1).forEach(row => {
+      let v = row.split(/,/)
+      if (v.length >= 4) {
+        let db = v[0] === 'pdb' ? data_pdb :
+          v[0] === 'offline' ? data_offline : {}
+
+        if (!(v[1] in db)) {
+          db[v[1]] = {}
+        }
+        db[v[1]][v[2]] = v[3]
+
+        if (v[1] < first_day) {
+          first_day = v[1]
+        }
+
+        if (v[1] > last_day) {
+          last_day = v[1]
+        }
+      }
+    })
+
+    first_day = new Date(first_day + ' 12:00:00')
+    last_day = new Date(last_day + ' 12:00:00')
+
+    callback(null)
+  })
+}
+
 function show (plz) {
   if (plz === '') {
     return render(labels_gesamt, data_gesamt, label_gesamt)
   }
 
   if (typeof data_offline === 'undefined') {
-    return httpRequest('csv.php?' + (new Date().getDate()), {}, (err, result) => {
+    load_detail((err) => {
       if (err) {
         return alert(err)
       }
-
-      let rows = result.body.split(/\n/g)
-      data_offline = {}
-      data_pdb = {}
-
-      rows.slice(1).forEach(row => {
-        let v = row.split(/,/)
-        if (v.length >= 4) {
-          let db = v[0] === 'pdb' ? data_pdb :
-            v[0] === 'offline' ? data_offline : {}
-
-          if (!(v[1] in db)) {
-            db[v[1]] = {}
-          }
-          db[v[1]][v[2]] = v[3]
-
-          if (v[1] < first_day) {
-            first_day = v[1]
-          }
-
-          if (v[1] > last_day) {
-            last_day = v[1]
-          }
-        }
-      })
-
-      first_day = new Date(first_day + ' 12:00:00')
-      last_day = new Date(last_day + ' 12:00:00')
 
       show(plz)
     })
