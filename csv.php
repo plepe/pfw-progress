@@ -1,5 +1,6 @@
 <?php include "conf.php"; /* load a local configuration */ ?>
-<?php include "modulekit/loader.php"; /* loads all php-includes */ ?>
+<?php require "inc/db_init.php" ?>
+<?php require "lib/modulekit/PDOext/PDOext.php" ?>
 <?php
 db_init();
 
