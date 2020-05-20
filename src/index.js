@@ -104,12 +104,26 @@ function show (plz) {
   while (day <= last_day) {
     let _d = date_format(day)
 
-    if (_d in data_offline && plz in data_offline[_d]) {
-      c += parseInt(data_offline[_d][plz])
-    }
+    if (plz === '*') {
+      if (_d in data_offline) {
+        for (let _plz in data_offline[_d]) {
+          c += parseInt(data_offline[_d][_plz])
+        }
+      }
 
-    if (_d in data_pdb && plz in data_pdb[_d]) {
-      c += parseInt(data_pdb[_d][plz])
+      if (_d in data_pdb) {
+        for (let _plz in data_pdb[_d]) {
+          c += parseInt(data_pdb[_d][_plz])
+        }
+      }
+    } else {
+      if (_d in data_offline && plz in data_offline[_d]) {
+        c += parseInt(data_offline[_d][plz])
+      }
+
+      if (_d in data_pdb && plz in data_pdb[_d]) {
+        c += parseInt(data_pdb[_d][plz])
+      }
     }
 
     d.push(c)
@@ -117,7 +131,7 @@ function show (plz) {
     day = new Date(day.getTime() + 86400000)
   }
 
-  render(l, d, 'Platz für Wien - Unterschriften (' + plz + ')')
+  render(l, d, 'Platz für Wien - Unterschriften (' + (plz === '*' ? 'Gesamt nach Eintragung' : plz) + ')')
 }
 
 function render (labels, data, label) {

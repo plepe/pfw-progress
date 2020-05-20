@@ -4,9 +4,16 @@ div.chart {
 }
 ul.selection {
   float: right;
+  margin-left: 0;
+  padding-left: 0;
 }
 ul.selection li {
   max-width: 250px;
+  margin-left: 40px;
+}
+ul.selection li.comment {
+  list-style: none;
+  margin-left: 0;
 }
 
 @media (max-width: 1100px) {
