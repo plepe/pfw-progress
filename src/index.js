@@ -33,7 +33,7 @@ window.onload = () => {
     let rows = result.body.split(/\n/g)
 
     rows.forEach(row => {
-      let v = row.split(/:/)
+      let v = row.split(/,/)
       if (v.length >= 2) {
 	labels_gesamt.push(v[0])
 	data_gesamt.push(v[1])
