@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <script src="node_modules/chart.js/dist/Chart.js"></script>
+<link rel='stylesheet' href='style.css'>
 </head>
 <body>
 
-<ul style='float: right'>
+<ul class='selection'>
   <li><a href='#' data-plz=''>Gesamt</a></li>
   <li><a href='#' data-plz='1010'>1. Bezirk</a></li>
   <li><a href='#' data-plz='1020'>2. Bezirk</a></li>
@@ -33,10 +34,10 @@
   <li><a href='#' data-plz='1230'>23. Bezirk</a></li>
 </ul>
 
-<div style='max-width: 100%; width: 800px; height: 400px;'>
+<div class='chart'>
 <canvas id="chart1">
 </div>
-<div style='max-width: 100%; width: 800px; height: 400px;'>
+<div class='chart'>
 <canvas id="chart2">
 </div>
 <div>
