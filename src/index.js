@@ -155,7 +155,7 @@ function show (plz) {
     l[l.length - 1] = 'Aktuell'
   }
 
-  render(l, d, 'Platz für Wien - Unterschriften (' + (plz === '*' ? 'Gesamt nach Eintragung' : plz) + ')')
+  render(l, d, 'Platz für Wien - Unterschriften (' + (plz === '*' ? 'Gesamt' : plz) + ' - nach Zeitpunkt der Eintragung)')
 }
 
 function render (labels, data, label) {
