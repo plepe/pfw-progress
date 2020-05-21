@@ -151,6 +151,10 @@ function show (plz) {
     day = new Date(day.getTime() + 86400000)
   }
 
+  if (l[l.length - 1] === date_format(new Date())) {
+    l[l.length - 1] = 'Aktuell'
+  }
+
   render(l, d, 'Platz für Wien - Unterschriften (' + (plz === '*' ? 'Gesamt nach Eintragung' : plz) + ')')
 }
 
