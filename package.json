@@ -9,7 +9,8 @@
   "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",
   "license": "GPL-3.0",
   "dependencies": {
-    "chart.js": "^2.9.3"
+    "chart.js": "^2.9.3",
+    "run-parallel": "^1.1.9"
   },
   "devDependencies": {
     "browserify": "^16.5.1",

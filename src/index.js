@@ -1,10 +1,13 @@
+const parallel = require('run-parallel')
+
 const httpRequest = require('./httpRequest.js')
+const pfwGetCurrent = require('./pfwGetCurrent.js')
 
 let data_gesamt = []
 let labels_gesamt = []
 let label_gesamt = 'Platz für Wien - Unterschriften (Stand jeweils um Mitternacht)'
 
-let data_offline, data_pdb
+let data_offline, data_pdb, data_current
 let first_day = date_format(new Date())
 let last_day = ''
 
@@ -25,20 +28,37 @@ window.onload = () => {
     }
   }
 
-  httpRequest('progress.csv?' + (new Date().getDate()), {}, (err, result) => {
+  parallel([
+    (done) => {
+      httpRequest('progress.csv?' + (new Date().getDate()), {}, (err, result) => {
+        if (err) {
+          return done(err)
+        }
+
+        let rows = result.body.split(/\n/g)
+
+        rows.forEach(row => {
+          let v = row.split(/,/)
+          if (v.length >= 2) {
+            labels_gesamt.push(v[0])
+            data_gesamt.push(v[1])
+          }
+        })
+
+        done()
+      })
+    },
+    pfwGetCurrent
+  ],
+  (err, result) => {
     if (err) {
       return alert(err)
     }
 
-    let rows = result.body.split(/\n/g)
+    data_current = result[1]
 
-    rows.forEach(row => {
-      let v = row.split(/,/)
-      if (v.length >= 2) {
-	labels_gesamt.push(v[0])
-	data_gesamt.push(v[1])
-      }
-    })
+    data_gesamt.push(data_current)
+    labels_gesamt.push('Aktuell')
 
     render(labels_gesamt, data_gesamt, label_gesamt)
   })
