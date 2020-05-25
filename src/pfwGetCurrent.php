@@ -4,10 +4,9 @@ function pfwGetCurrent () {
 
   $qry = array();
   for ($i = 1; $i <= 23; $i++) {
-    $plz = sprintf("1%1$02d0", $i);
-    $qry[] = "select sum(plz{$plz}) as count from unterschriften_listen where plz{$plz}>0";
+    $qry[] = sprintf("plz1%1$02d0", $i);
   }
-  $qry_offline = "select sum(count) as count from (" . implode(" union ", $qry) . ') t';
+  $qry_offline = "select sum(" . implode(' + ', $qry) . ") as count from unterschriften_listen";
 
   $q = $db->query($qry_offline);
   if (!$q) {
