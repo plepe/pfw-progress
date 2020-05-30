@@ -82,7 +82,7 @@ window.onload = () => {
     data_gesamt.push(data_current)
     labels_gesamt.push('Aktuell')
 
-    render(labels_gesamt, data_gesamt, label_gesamt, [ data_current, data_bevoelkerung_gesamt ], 'Platz für Wien - Anteil Unterschriften an Bevölkerung (Gesamt)')
+    show('')
   })
 }
 
@@ -125,10 +125,6 @@ function load_detail (callback) {
 }
 
 function show (plz) {
-  if (plz === '') {
-    return render(labels_gesamt, data_gesamt, label_gesamt, [ data_current, data_bevoelkerung_gesamt ], 'Platz für Wien - Anteil Unterschriften an Bevölkerung (Gesamt)')
-  }
-
   if (typeof data_offline === 'undefined') {
     return load_detail((err) => {
       if (err) {
@@ -139,9 +135,25 @@ function show (plz) {
     })
   }
 
+  if (plz === '') {
+    return render(labels_gesamt, data_gesamt, label_gesamt, [ data_current, data_bevoelkerung_gesamt ], 'Platz für Wien - Anteil Unterschriften an Bevölkerung (Gesamt)', [
+      Object.values(data_offline).reduce((sum, d) => {
+        return sum + Object.values(d).reduce((sum, d) => {
+          return sum + parseInt(d)
+        }, 0)
+      }, 0),
+      Object.values(data_pdb).reduce((sum, d) => {
+        return sum + Object.values(d).reduce((sum, d) => {
+          return sum + parseInt(d)
+        }, 0)
+      }, 0)
+    ])
+  }
+
   let day = first_day
   let l = []
   let d = []
+  let offline = 0, pdb = 0
   let c = 0
   while (day <= last_day) {
     let _d = date_format(day)
@@ -150,21 +162,25 @@ function show (plz) {
       if (_d in data_offline) {
         for (let _plz in data_offline[_d]) {
           c += parseInt(data_offline[_d][_plz])
+          offline += parseInt(data_offline[_d][_plz])
         }
       }
 
       if (_d in data_pdb) {
         for (let _plz in data_pdb[_d]) {
           c += parseInt(data_pdb[_d][_plz])
+          pdb += parseInt(data_pdb[_d][_plz])
         }
       }
     } else {
       if (_d in data_offline && plz in data_offline[_d]) {
         c += parseInt(data_offline[_d][plz])
+        offline += parseInt(data_offline[_d][plz])
       }
 
       if (_d in data_pdb && plz in data_pdb[_d]) {
         c += parseInt(data_pdb[_d][plz])
+        pdb += parseInt(data_pdb[_d][plz])
       }
     }
 
@@ -183,10 +199,10 @@ function show (plz) {
     pieChart = [ d[d.length - 1], data_bevoelkerung_bezirke[m[1] - 1] ]
   }
 
-  render(l, d, 'Platz für Wien - Unterschriften (' + (plz === '*' ? 'Gesamt' : plz) + ' - nach Zeitpunkt der Eintragung)', pieChart, 'Platz für Wien - Anteil Unterschriften an Bevölkerung (' + (plz === '*' ? 'Gesamt' : plz) + ')')
+  render(l, d, 'Platz für Wien - Unterschriften (' + (plz === '*' ? 'Gesamt' : plz) + ' - nach Zeitpunkt der Eintragung)', pieChart, 'Platz für Wien - Anteil Unterschriften an Bevölkerung (' + (plz === '*' ? 'Gesamt' : plz) + ')', [ offline, pdb ])
 }
 
-function render (labels, data, label, pieChart, pieLabel) {
+function render (labels, data, label, pieChart, pieLabel, aktuell) {
   let barLast = 0
   barData = data.map(v => {
     const h = v - barLast
@@ -260,4 +276,7 @@ function render (labels, data, label, pieChart, pieLabel) {
     chart3.data.datasets[0].data = pieChart
     chart3.update()
   }
+
+  document.getElementById('aktuell').innerHTML =
+    'Aktuell: ' + pieChart[0] + ' (' + aktuell[0] + ' offline, ' + aktuell[1] + ' online), ' + (pieChart[0] / pieChart[1] * 100).toFixed(2) + '% der Bevölkerung'
 }
