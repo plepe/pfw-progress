@@ -4,6 +4,8 @@ const httpRequest = require('./httpRequest.js')
 const pfwGetCurrent = require('./pfwGetCurrent.js')
 
 let data_gesamt = []
+let data_bevoelkerung_bezirke = []
+let data_bevoelkerung_gesamt
 let labels_gesamt = []
 let label_gesamt = 'Platz für Wien - Unterschriften (Stand jeweils um Mitternacht)'
 
@@ -11,7 +13,7 @@ let data_offline, data_pdb, data_current
 let first_day = date_format(new Date())
 let last_day = ''
 
-let chart1, chart2
+let chart1, chart2, chart3
 
 function date_format (date) {
   return date.toISOString().substr(0, 10)
@@ -48,6 +50,26 @@ window.onload = () => {
         done()
       })
     },
+    (done) => {
+      httpRequest('bevölkerung.csv', {}, (err, result) => {
+        if (err) {
+          return done(err)
+        }
+
+        let rows = result.body.split(/\n/g)
+
+        rows.forEach(row => {
+          let v = row.split(/,/)
+          if (v.length == 2) {
+            data_bevoelkerung_bezirke.push(parseInt(v[1]))
+          }
+        })
+
+        data_bevoelkerung_gesamt = data_bevoelkerung_bezirke.reduce((v, sum) => (sum || 0) + v)
+
+        done()
+      })
+    },
     pfwGetCurrent
   ],
   (err, result) => {
@@ -55,12 +77,12 @@ window.onload = () => {
       return alert(err)
     }
 
-    data_current = result[1]
+    data_current = result[2]
 
     data_gesamt.push(data_current)
     labels_gesamt.push('Aktuell')
 
-    render(labels_gesamt, data_gesamt, label_gesamt)
+    render(labels_gesamt, data_gesamt, label_gesamt, [ data_current, data_bevoelkerung_gesamt ], 'Platz für Wien - Anteil Unterschriften an Bevölkerung (Gesamt)')
   })
 }
 
@@ -104,11 +126,11 @@ function load_detail (callback) {
 
 function show (plz) {
   if (plz === '') {
-    return render(labels_gesamt, data_gesamt, label_gesamt)
+    return render(labels_gesamt, data_gesamt, label_gesamt, [ data_current, data_bevoelkerung_gesamt ], 'Platz für Wien - Anteil Unterschriften an Bevölkerung (Gesamt)')
   }
 
   if (typeof data_offline === 'undefined') {
-    load_detail((err) => {
+    return load_detail((err) => {
       if (err) {
         return alert(err)
       }
@@ -155,10 +177,16 @@ function show (plz) {
     l[l.length - 1] = 'Aktuell'
   }
 
-  render(l, d, 'Platz für Wien - Unterschriften (' + (plz === '*' ? 'Gesamt' : plz) + ' - nach Zeitpunkt der Eintragung)')
+  let pieChart = [ data_current, data_bevoelkerung_gesamt ]
+  let m = plz.match(/^1([0-2][0-9])0$/)
+  if (m) {
+    pieChart = [ d[d.length - 1], data_bevoelkerung_bezirke[m[1] - 1] ]
+  }
+
+  render(l, d, 'Platz für Wien - Unterschriften (' + (plz === '*' ? 'Gesamt' : plz) + ' - nach Zeitpunkt der Eintragung)', pieChart, 'Platz für Wien - Anteil Unterschriften an Bevölkerung (' + (plz === '*' ? 'Gesamt' : plz) + ')')
 }
 
-function render (labels, data, label) {
+function render (labels, data, label, pieChart, pieLabel) {
   let barLast = 0
   barData = data.map(v => {
     const h = v - barLast
@@ -203,6 +231,20 @@ function render (labels, data, label) {
       },
       options: {}
     })
+
+    chart3 = new Chart('chart3', {
+      type: 'pie',
+      data: {
+        labels: [ 'Platz für Wien - Anteil Unterschriften an Bevölkerung (Gesamt)', '' ],
+        datasets: [{
+          data: pieChart,
+          borderColor: [ 'rgb(14, 83, 141)', 'rgb(196, 196, 196)' ],
+          borderWidth: [ 2, 0 ],
+          backgroundColor: [ 'rgb(239, 121, 45)', 'rgb(196, 196, 196)' ]
+        }]
+      },
+      options: {}
+    })
   } else {
     chart1.data.datasets[0].label = label
     chart1.data.labels = labels
@@ -213,5 +255,9 @@ function render (labels, data, label) {
     chart2.data.labels = labels
     chart2.data.datasets[0].data = barData
     chart2.update()
+
+    chart3.data.labels = [pieLabel, '']
+    chart3.data.datasets[0].data = pieChart
+    chart3.update()
   }
 }
