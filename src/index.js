@@ -12,6 +12,7 @@ let label_gesamt = 'Platz für Wien - Unterschriften (Stand jeweils um Mitternac
 let data_offline, data_pdb, data_current
 let first_day = date_format(new Date())
 let last_day = ''
+const goal = 57255
 
 let chart1, chart2, chart3
 
@@ -278,5 +279,7 @@ function render (labels, data, label, pieChart, pieLabel, aktuell) {
   }
 
   document.getElementById('aktuell').innerHTML =
-    'Aktuell: ' + pieChart[0] + ' (' + aktuell[0] + ' offline, ' + aktuell[1] + ' online), ' + (pieChart[0] / pieChart[1] * 100).toFixed(2) + '% der Bevölkerung'
+    'Aktuell: ' + pieChart[0] + ' (' + aktuell[0] + ' offline, ' + aktuell[1] + ' online), ' +
+    (pieChart[0] / pieChart[1] * 100).toFixed(2) + '% der Bevölkerung, ' +
+    (pieChart[0] / goal * 100).toFixed(1) + '% Zielerreichung'
 }
