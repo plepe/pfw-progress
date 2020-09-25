@@ -24,8 +24,9 @@ function update () {
   let form = document.getElementById('selector')
 
   let plz = form.elements.plz.value
+  let types = ['offline','pdb'].filter(type => !!document.getElementById('type-' + type).checked)
 
-  show(plz)
+  show(plz, types)
 }
 
 window.onload = () => {
@@ -128,14 +129,14 @@ function load_detail (callback) {
   })
 }
 
-function show (plz) {
+function show (plz, types) {
   if (typeof data_offline === 'undefined') {
     return load_detail((err) => {
       if (err) {
         return alert(err)
       }
 
-      show(plz)
+      show(plz, types)
     })
   }
 
@@ -163,26 +164,26 @@ function show (plz) {
     let _d = date_format(day)
 
     if (plz === '*') {
-      if (_d in data_offline) {
+      if (types.includes('offline') && _d in data_offline) {
         for (let _plz in data_offline[_d]) {
           c += parseInt(data_offline[_d][_plz])
           offline += parseInt(data_offline[_d][_plz])
         }
       }
 
-      if (_d in data_pdb) {
+      if (types.includes('pdb') && _d in data_pdb) {
         for (let _plz in data_pdb[_d]) {
           c += parseInt(data_pdb[_d][_plz])
           pdb += parseInt(data_pdb[_d][_plz])
         }
       }
     } else {
-      if (_d in data_offline && plz in data_offline[_d]) {
+      if (types.includes('offline') && _d in data_offline && plz in data_offline[_d]) {
         c += parseInt(data_offline[_d][plz])
         offline += parseInt(data_offline[_d][plz])
       }
 
-      if (_d in data_pdb && plz in data_pdb[_d]) {
+      if (types.includes('pdb') && _d in data_pdb && plz in data_pdb[_d]) {
         c += parseInt(data_pdb[_d][plz])
         pdb += parseInt(data_pdb[_d][plz])
       }
