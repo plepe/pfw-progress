@@ -20,15 +20,18 @@ function date_format (date) {
   return date.toISOString().substr(0, 10)
 }
 
+function update () {
+  let form = document.getElementById('selector')
+
+  let plz = form.elements.plz.value
+
+  show(plz)
+}
+
 window.onload = () => {
-  let as = document.getElementsByTagName('a')
+  let as = document.getElementsByTagName('input')
   for (let i = 0; i < as.length; i++) {
-    if (as[i].hasAttribute('data-plz')) {
-      as[i].onclick = () => {
-        show(as[i].getAttribute('data-plz'))
-        return false
-      }
-    }
+    as[i].onchange = () => update()
   }
 
   parallel([
@@ -83,7 +86,7 @@ window.onload = () => {
     data_gesamt.push(data_current)
     labels_gesamt.push('Aktuell')
 
-    show('')
+    update()
   })
 }
 
