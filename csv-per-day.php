@@ -10,7 +10,7 @@ if (array_key_exists('plz', $_REQUEST)) {
     exit(1);
   }
   $plz = $_REQUEST['plz'];
-  $qry_offline = "select 'offline' as type, datum, {$plz} as plz, sum(plz{$plz}) as count from unterschriften_listen where plz{$plz}>0 group by datum order by datum";
+  $qry_offline = "select 'offline' as type, datum, {$plz} as plz, sum(plz{$plz}) as count from unterschriften_listen where plz{$plz}!=0 group by datum order by datum";
 
   $qry_pdb = "select 'pdb' as type, datum, plz, count(*) count from (select plz, substr(date_recorded, 1, 10) as datum from wp_participants_database where last_accessed is not null and plz=" . $db->quote($plz) . ") t group by datum, plz order by datum, plz";
 }
@@ -18,7 +18,7 @@ else {
   $qry = array();
   for ($i = 1; $i <= 23; $i++) {
     $plz = sprintf("1%1$02d0", $i);
-    $qry[] = "select datum, {$plz} as plz, sum(plz{$plz}) as count from unterschriften_listen where plz{$plz}>0 group by datum";
+    $qry[] = "select datum, {$plz} as plz, sum(plz{$plz}) as count from unterschriften_listen where plz{$plz}!=0 group by datum";
   }
   $qry_offline = "select 'offline' as type, datum, plz, count from (" . implode(" union ", $qry) . ') t order by datum, plz';
 
