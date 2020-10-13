@@ -14,7 +14,7 @@ let first_day = date_format(new Date())
 let last_day = ''
 const goal = 57255
 
-let chart1, chart2, chart3
+let chart1, chart2
 
 function date_format (date) {
   return date.toISOString().substr(0, 10)
@@ -252,20 +252,6 @@ function render (labels, data, label, pieChart, pieLabel, aktuell) {
       },
       options: {}
     })
-
-    chart3 = new Chart('chart3', {
-      type: 'pie',
-      data: {
-        labels: [ 'Platz für Wien - Anteil Unterschriften an Bevölkerung (Gesamt)', '' ],
-        datasets: [{
-          data: pieChart,
-          borderColor: [ 'rgb(14, 83, 141)', 'rgb(196, 196, 196)' ],
-          borderWidth: [ 2, 0 ],
-          backgroundColor: [ 'rgb(239, 121, 45)', 'rgb(196, 196, 196)' ]
-        }]
-      },
-      options: {}
-    })
   } else {
     chart1.data.datasets[0].label = label
     chart1.data.labels = labels
@@ -276,10 +262,6 @@ function render (labels, data, label, pieChart, pieLabel, aktuell) {
     chart2.data.labels = labels
     chart2.data.datasets[0].data = barData
     chart2.update()
-
-    chart3.data.labels = [pieLabel, '']
-    chart3.data.datasets[0].data = pieChart
-    chart3.update()
   }
 
   document.getElementById('aktuell').innerHTML =
