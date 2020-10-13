@@ -23,6 +23,10 @@ function date_format (date) {
 function update () {
   let form = document.getElementById('selector')
 
+  if (form.elements.plz.value === '') {
+    document.getElementById('plz-').setAttribute('checked', true)
+  }
+
   let plz = form.elements.plz.value
   let types = ['offline','pdb'].filter(type => !!document.getElementById('type-' + type).checked)
 
