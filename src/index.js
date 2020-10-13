@@ -12,7 +12,7 @@ let label_gesamt = 'Platz für Wien - Unterschriften (Stand jeweils um Mitternac
 let data_offline, data_pdb, data_current
 let first_day = date_format(new Date())
 let last_day = ''
-const goal = 57255
+const goal = 56650
 
 let chart1, chart2
 
