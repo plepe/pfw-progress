@@ -133,6 +133,37 @@ function load_detail (callback) {
   })
 }
 
+function filter (data, labels, options) {
+  let indexFirst = 0
+  let indexLast = labels.length - 1
+
+  if (options.first_day) {
+    indexFirst = labels.indexOf(options.first_day)
+  }
+
+  if (options.last_day) {
+    indexLast = labels.indexOf(options.last_day)
+  }
+
+  return data.filter((v, i) => i >= indexFirst && i <= indexLast)
+}
+
+function get_filter_options () {
+  const result = {}
+
+  let d = document.getElementById('first-day')
+  if (d && d.value) {
+    result.first_day = d.value
+  }
+
+  d = document.getElementById('last-day')
+  if (d && d.value) {
+    result.last_day = d.value
+  }
+
+  return result
+}
+
 function show (plz, types) {
   if (typeof data_offline === 'undefined') {
     return load_detail((err) => {
@@ -144,8 +175,13 @@ function show (plz, types) {
     })
   }
 
+  const filter_options = get_filter_options()
+
   if (plz === '') {
-    return render(labels_gesamt, data_gesamt, label_gesamt, [ data_current, data_bevoelkerung_gesamt ], 'Platz für Wien - Anteil Unterschriften an Bevölkerung (Gesamt)', [
+    const _data = filter(data_gesamt, labels_gesamt, filter_options)
+    const _labels = filter(labels_gesamt, labels_gesamt, filter_options)
+
+    return render(_labels, _data, label_gesamt, [ data_current, data_bevoelkerung_gesamt ], 'Platz für Wien - Anteil Unterschriften an Bevölkerung (Gesamt)', [
       Object.values(data_offline).reduce((sum, d) => {
         return sum + Object.values(d).reduce((sum, d) => {
           return sum + parseInt(d)
@@ -207,6 +243,9 @@ function show (plz, types) {
   if (m) {
     pieChart = [ d[d.length - 1], data_bevoelkerung_bezirke[m[1] - 1] ]
   }
+
+  d = filter(d, l, filter_options)
+  l = filter(l, l, filter_options)
 
   render(l, d, 'Platz für Wien - Unterschriften (' + (plz === '*' ? 'Gesamt' : plz) + ' - nach Zeitpunkt der Eintragung)', pieChart, 'Platz für Wien - Anteil Unterschriften an Bevölkerung (' + (plz === '*' ? 'Gesamt' : plz) + ')', [ offline, pdb ])
 }
